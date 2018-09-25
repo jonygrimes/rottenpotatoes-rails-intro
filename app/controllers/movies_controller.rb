@@ -11,7 +11,8 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @movies = params[:sort] ? Movie.order(params[:sort]) : Movie.all
+    #I guess that c++ Ternary operators work in ruby. Who knew?
   end
 
   def new
