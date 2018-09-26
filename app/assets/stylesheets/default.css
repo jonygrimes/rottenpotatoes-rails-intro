@@ -62,3 +62,21 @@ form label {
 table#movies th.hilite {
   background-color: yellow;
 }
+
+input[type=checkbox]{
+  width: 1.1em !important;
+  height: 1.1em !important;
+  
+  outline: 2px dashed red;
+  outline-width: -0.2em;
+  outline-offset: -2px;
+}
+
+input[type=checkbox]:checked{
+  width: 1.1em !important;
+  height: 1.1em !important;
+  
+  outline: 2px solid green;
+  outline-width: -0.2em;
+  outline-offset: -2px;
+}

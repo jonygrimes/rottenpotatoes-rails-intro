@@ -12,11 +12,17 @@ class MoviesController < ApplicationController
   
   def index
     # I used: https://stackoverflow.com/questions/3976295/order-a-collection-as-desc
-    @all_ratings=Movie.order(:rating).map(&:rating).uniq
+    # I also used (for added saftey): https://stackoverflow.com/questions/18441435/sort-alphabetically-in-rails?rq=1
+    @all_ratings=Movie.order(:rating).map(&:rating).uniq.sort_by!{ |e| e.downcase }
     (params[:ratings] ? params[:ratings].keys : @all_ratings).each do |rating| params[rating]=true end
+
+    # I used: https://www.tutorialspoint.com/ruby-on-rails/rails-session-cookies.htm
+    # I also used: https://www.justinweiss.com/articles/how-rails-sessions-work/
+    if ((session[:sort] || session[:ratings]) && !params[:sort] && !params[:ratings]); redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings]) end
     
     # I used: https://stackoverflow.com/questions/7236612/select-everything-in-a-database-where-order-by
     @movies = params[:sort] ? Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings)).order(params[:sort]) : Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings))
+    session[:ratings], session[:sort]= params[:ratings], params[:sort]
   end
   
   
