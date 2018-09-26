@@ -9,11 +9,17 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
-
+  
   def index
-    @movies = params[:sort] ? Movie.order(params[:sort]) : Movie.all
-    #I guess that c++ Ternary operators work in ruby. Who knew?
+    # I used: https://stackoverflow.com/questions/3976295/order-a-collection-as-desc
+    @all_ratings=Movie.order(:rating).map(&:rating).uniq
+    (params[:ratings] ? params[:ratings].keys : @all_ratings).each do |rating| params[rating]=true end
+    
+    # I used: https://stackoverflow.com/questions/7236612/select-everything-in-a-database-where-order-by
+    @movies = params[:sort] ? Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings)).order(params[:sort]) : Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings))
   end
+  
+  
 
   def new
     # default: render 'new' template
