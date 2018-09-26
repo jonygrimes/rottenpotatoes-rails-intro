@@ -11,6 +11,9 @@ class MoviesController < ApplicationController
   end
   
   def index
+    # Because I have problems with keeping sorting, I'll force it to change when needed
+    if(session[:sort] && params[:sort]==nil ); params[:sort]=session[:sort] else session[:sort]=params[:sort] end
+    
     # I used: https://stackoverflow.com/questions/3976295/order-a-collection-as-desc
     # I also used (for added saftey): https://stackoverflow.com/questions/18441435/sort-alphabetically-in-rails?rq=1
     @all_ratings=Movie.order(:rating).map(&:rating).uniq.sort_by!{ |e| e.downcase }
@@ -21,7 +24,7 @@ class MoviesController < ApplicationController
     if ((session[:sort] || session[:ratings]) && !params[:sort] && !params[:ratings]); redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings]) end
     
     # I used: https://stackoverflow.com/questions/7236612/select-everything-in-a-database-where-order-by
-    @movies = params[:sort] ? Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings)).order(params[:sort]) : Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings))
+    @movies = params[:sort] ? Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings)).order(session[:sort]) : Movie.where(:rating => (params[:ratings] ? params[:ratings].keys : @all_ratings))
     session[:ratings], session[:sort]= params[:ratings], params[:sort]
   end
   
